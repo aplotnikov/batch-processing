@@ -34,16 +34,17 @@ tasks.withType(Pmd) {
     }
 }
 
-findbugs {
+spotbugs {
+    toolVersion = '3.1.8'
     sourceSets = [sourceSets.main]
     effort = 'max'
     reportLevel = 'low'
 }
 
-tasks.withType(FindBugs) {
+spotbugsMain {
     reports {
-        xml.enabled = false
         html.enabled = true
+        xml.enabled = false
     }
 }
 

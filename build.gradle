@@ -6,7 +6,7 @@ plugins {
     id 'build-dashboard'
 
     id 'pmd'
-    id 'findbugs'
+    id 'com.github.spotbugs' version '1.6.5'
     id 'checkstyle'
     id 'codenarc'
 }
