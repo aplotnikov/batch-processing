@@ -26,5 +26,10 @@ jar {
 }
 
 dependencies {
+    compile 'io.projectreactor:reactor-core:3.2.1.RELEASE'
 
+    testCompile(
+            'org.codehaus.groovy:groovy-all:2.5.3',
+            'org.spockframework:spock-core:1.2-groovy-2.5'
+    )
 }
