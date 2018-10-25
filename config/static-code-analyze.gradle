@@ -1,0 +1,65 @@
+ext {
+    reportDirectory = "$project.buildDir/reports"
+}
+
+test {
+    reports {
+        junitXml.enabled = false
+        html.enabled = true
+    }
+}
+
+pmd {
+    toolVersion = '6.7.0'
+    sourceSets = [sourceSets.main]
+    ruleSets = [
+            'java-basic',
+            'java-braces',
+            'java-clone',
+            'java-codesize',
+            'java-empty',
+            'java-finalizers',
+            'java-strictexception',
+            'java-strings',
+            'java-sunsecure',
+            'java-typeresolution',
+            'java-unnecessary'
+    ]
+}
+
+tasks.withType(Pmd) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+findbugs {
+    sourceSets = [sourceSets.main]
+    effort = 'max'
+    reportLevel = 'low'
+}
+
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
+
+checkstyle {
+    toolVersion = '8.12'
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+codenarc {
+    toolVersion = '1.2.1'
+    sourceSets = [sourceSets.test]
+    configFile = rootProject.file 'config/codenarc/codenarc.groovy'
+}

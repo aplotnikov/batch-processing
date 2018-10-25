@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'groovy'
+
+    id 'project-report'
+    id 'build-dashboard'
+
+    id 'pmd'
+    id 'findbugs'
+    id 'checkstyle'
+    id 'codenarc'
+}
+
+apply from: 'config/static-code-analyze.gradle'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_10
+
+jar {
+    baseName = 'batch-processing'
+    group = 'io.github.aplotnikov'
+    version = '0.0.1-SNAPSHOT'
+}
+
+dependencies {
+
+}
