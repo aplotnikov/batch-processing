@@ -7,6 +7,8 @@ import static java.util.concurrent.TimeUnit.SECONDS
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -43,6 +45,27 @@ class ClientProcessorSpec extends Specification {
         then:
             with(response) {
                 clientId == thirdClient.id
+                status == FAILED
+            }
+    }
+
+    void 'should execution take at least 2 seconds as it is specified in the constructor'() {
+        given:
+            int pause = 2
+        and:
+            processor = new ClientProcessor(pause)
+        and:
+            Client client = new Client(1)
+        and:
+            Instant start = Instant.now()
+        when:
+            Response response = processor.process(client)
+        then:
+            Instant finish = Instant.now()
+            Duration.between(start, finish).toSeconds() >= pause
+        and:
+            with(response) {
+                clientId == client.id
                 status == FAILED
             }
     }

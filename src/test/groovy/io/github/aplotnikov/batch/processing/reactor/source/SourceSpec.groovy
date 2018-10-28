@@ -21,7 +21,7 @@ class SourceSpec extends Specification {
                     .verify()
     }
 
-    void 'should generate 0 files into Flux and Flux should be completed when it was configured in the constructor'() {
+    void 'should generate 0 files into Flux and Flux should be completed when it is configured in the constructor'() {
         given:
             source = new Source(0, 0)
         expect:
