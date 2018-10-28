@@ -32,8 +32,8 @@ class Response {
         }
 
         Response that = (Response) other;
-        return clientId == that.clientId &&
-                status == that.status;
+        return clientId == that.clientId
+                && status == that.status;
     }
 
     @Override
@@ -43,10 +43,10 @@ class Response {
 
     @Override
     public String toString() {
-        return "ClientResponse{" +
-                "clientId=" + clientId +
-                ", status=" + status +
-                '}';
+        return "ClientResponse{"
+                + "clientId=" + clientId
+                + ", status=" + status
+                + '}';
     }
 
     enum Status {
