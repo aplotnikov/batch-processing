@@ -4,6 +4,9 @@ import reactor.test.StepVerifier
 import spock.lang.Specification
 import spock.lang.Subject
 
+import java.time.Duration
+import java.time.Instant
+
 class SourceSpec extends Specification {
 
     @Subject
@@ -16,5 +19,22 @@ class SourceSpec extends Specification {
                     .expectNext('client.xml')
                     .expectComplete()
                     .verify()
+    }
+
+    void 'should execution take at least 2 seconds as it is specified in the constructor'() {
+        given:
+            int pause = 2
+        and:
+            source = new Source(1, pause)
+        and:
+            Instant start = Instant.now()
+        when:
+            StepVerifier.create(source.readAll())
+                    .expectNext('client.xml')
+                    .expectComplete()
+                    .verify()
+        then:
+            Instant finish = Instant.now()
+            Duration.between(start, finish).toSeconds() >= pause
     }
 }
