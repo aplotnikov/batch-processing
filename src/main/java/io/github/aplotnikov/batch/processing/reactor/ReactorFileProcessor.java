@@ -10,17 +10,20 @@ class ReactorFileProcessor implements Runnable {
 
     private final XmlFileReader reader;
 
-    ReactorFileProcessor(Repository repository, Queue queue, XmlFileReader reader) {
+    private final ClientProcessor processor;
+
+    ReactorFileProcessor(Repository repository, Queue queue, XmlFileReader reader, ClientProcessor processor) {
         this.repository = repository;
         this.queue = queue;
         this.reader = reader;
+        this.processor = processor;
     }
 
     @Override
     public void run() {
         Flux.merge(repository.readAll(), queue.poll())
-            .flatMap(reader::read);
-        // generate responses with pause
+            .flatMap(reader::read)
+            .map(processor::process);
         // collect responses
         // generate result file
     }

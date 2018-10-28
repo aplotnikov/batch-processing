@@ -2,15 +2,15 @@ package io.github.aplotnikov.batch.processing.reactor;
 
 import java.util.Objects;
 
-public class Client {
+class Client {
 
     private final long id;
 
-    public Client(long id) {
+    Client(long id) {
         this.id = id;
     }
 
-    public long getId() {
+    long getId() {
         return id;
     }
 
