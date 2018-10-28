@@ -32,7 +32,7 @@ class ClientProcessor {
 
         do {
             isSuccessful = isLastResponseSuccessful.get();
-        } while (isLastResponseSuccessful.compareAndExchange(isSuccessful, !isSuccessful));
+        } while (!isLastResponseSuccessful.compareAndSet(isSuccessful, !isSuccessful));
 
         return isSuccessful;
     }

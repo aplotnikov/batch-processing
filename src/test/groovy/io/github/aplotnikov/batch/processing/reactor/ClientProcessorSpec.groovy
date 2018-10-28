@@ -1,9 +1,16 @@
 package io.github.aplotnikov.batch.processing.reactor
 
 import static io.github.aplotnikov.batch.processing.reactor.Response.Status.FAILED
+import static io.github.aplotnikov.batch.processing.reactor.Response.Status.SUCCESS
+import static java.util.concurrent.TimeUnit.SECONDS
 
 import spock.lang.Specification
 import spock.lang.Subject
+
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 class ClientProcessorSpec extends Specification {
 
@@ -29,7 +36,7 @@ class ClientProcessorSpec extends Specification {
         then:
             with(response) {
                 clientId == secondClient.id
-                status == FAILED
+                status == SUCCESS
             }
         when:
             response = processor.process(thirdClient)
@@ -38,5 +45,42 @@ class ClientProcessorSpec extends Specification {
                 clientId == thirdClient.id
                 status == FAILED
             }
+    }
+
+    void 'should work correctly under concurrent usage'() {
+        given:
+            int threadNumber = 10
+        and:
+            ExecutorService threadPool = Executors.newFixedThreadPool(threadNumber)
+        and:
+            CountDownLatch afterInitBlocker = new CountDownLatch(threadNumber)
+            CountDownLatch allDone = new CountDownLatch(threadNumber)
+        and:
+            AtomicInteger clientNumber = new AtomicInteger(1)
+        and:
+            List<Response> actualResponses = [].asSynchronized()
+        and:
+            Runnable action = {
+                int id = clientNumber.getAndIncrement()
+
+                afterInitBlocker.countDown()
+                afterInitBlocker.await()
+
+                actualResponses << processor.process(new Client(id))
+
+                allDone.countDown()
+            }
+        when:
+            try {
+                (1..threadNumber).each {
+                    threadPool.submit(action)
+                }
+                allDone.await(10, SECONDS)
+            } finally {
+                threadPool.shutdown()
+            }
+        then:
+            actualResponses.size() == threadNumber
+            actualResponses.findAll { it.status == SUCCESS }.size() == threadNumber / 2
     }
 }
