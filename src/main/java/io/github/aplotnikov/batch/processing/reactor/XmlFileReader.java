@@ -14,17 +14,17 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 class XmlFileReader {
 
-    Flux<Client> read(String path) {
+    Flux<Client> read(String filePath) {
         return Flux.generate(
-                reader(path),
+                reader(filePath),
                 this::findClients,
-                close()
+                closeReader()
         );
     }
 
-    private Callable<XMLStreamReader> reader(String path) {
+    private Callable<XMLStreamReader> reader(String filePath) {
         return () -> {
-            BufferedInputStream inputStream = new BufferedInputStream(getClass().getResourceAsStream(path));
+            BufferedInputStream inputStream = new BufferedInputStream(getClass().getResourceAsStream(filePath));
             return XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
         };
     }
@@ -49,7 +49,7 @@ class XmlFileReader {
         );
     }
 
-    private Consumer<XMLStreamReader> close() {
+    private Consumer<XMLStreamReader> closeReader() {
         return reader -> Try.run(reader::close).get();
     }
 }
