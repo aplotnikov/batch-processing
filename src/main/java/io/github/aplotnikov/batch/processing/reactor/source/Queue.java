@@ -1,22 +1,22 @@
 package io.github.aplotnikov.batch.processing.reactor.source;
 
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import reactor.core.publisher.Flux;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
+import static lombok.AccessLevel.PRIVATE;
 
+@FieldDefaults(level = PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 class Queue {
 
-    private final int processedFileNumber;
+    int processedFileNumber;
 
-    private final int pause;
-
-    Queue(int processedFileNumber, int pause) {
-        this.processedFileNumber = processedFileNumber;
-        this.pause = pause;
-    }
+    int pause;
 
     Flux<String> poll() {
         AtomicInteger processedFiles = new AtomicInteger(0);

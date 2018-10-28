@@ -1,21 +1,23 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static io.github.aplotnikov.batch.processing.reactor.Response.Status.FAILED;
 import static io.github.aplotnikov.batch.processing.reactor.Response.Status.SUCCESS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
+import static lombok.AccessLevel.PRIVATE;
 
+@FieldDefaults(level = PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 class ClientProcessor {
 
-    private final AtomicBoolean isLastResponseSuccessful = new AtomicBoolean();
+    AtomicBoolean isLastResponseSuccessful = new AtomicBoolean();
 
-    private final int pause;
-
-    ClientProcessor(int pause) {
-        this.pause = pause;
-    }
+    int pause;
 
     Response process(Client client) {
         parkNanos(SECONDS.toNanos(pause));

@@ -1,20 +1,20 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
 import io.github.aplotnikov.batch.processing.reactor.source.XmlFileSource;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
+import static lombok.AccessLevel.PRIVATE;
+
+@FieldDefaults(level = PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 class ReactorFileProcessor implements Runnable {
 
-    private final XmlFileSource fileSource;
+    XmlFileSource fileSource;
 
-    private final XmlFileReader reader;
+    XmlFileReader reader;
 
-    private final ClientProcessor processor;
-
-    ReactorFileProcessor(XmlFileSource fileSource, XmlFileReader reader, ClientProcessor processor) {
-        this.fileSource = fileSource;
-        this.reader = reader;
-        this.processor = processor;
-    }
+    ClientProcessor processor;
 
     @Override
     public void run() {
