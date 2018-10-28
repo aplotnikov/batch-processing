@@ -21,6 +21,15 @@ class SourceSpec extends Specification {
                     .verify()
     }
 
+    void 'should generate 0 files into Flux and Flux should be completed when it was configured in the constructor'() {
+        given:
+            source = new Source(0, 0)
+        expect:
+            StepVerifier.create(source.readAll())
+                    .expectComplete()
+                    .verify()
+    }
+
     void 'should execution take at least 2 seconds as it is specified in the constructor'() {
         given:
             int pause = 2
