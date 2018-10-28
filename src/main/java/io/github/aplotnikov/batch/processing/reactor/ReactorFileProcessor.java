@@ -19,7 +19,7 @@ class ReactorFileProcessor implements Runnable {
     @Override
     public void run() {
         Flux.merge(repository.readAll(), queue.poll())
-            .map(reader::read);
+            .flatMap(reader::read);
         // generate responses with pause
         // collect responses
         // generate result file
