@@ -26,7 +26,10 @@ jar {
 }
 
 dependencies {
-    compile 'io.projectreactor:reactor-core:3.2.1.RELEASE'
+    compile(
+            'io.projectreactor:reactor-core:3.2.1.RELEASE',
+            'io.vavr:vavr:0.9.2'
+    )
 
     testCompile(
             'org.codehaus.groovy:groovy-all:2.5.3',
