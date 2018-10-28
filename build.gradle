@@ -49,6 +49,8 @@ dependencies {
     testCompile(
             'org.codehaus.groovy:groovy-all:2.5.3',
             'org.spockframework:spock-core:1.2-groovy-2.5',
-            "io.projectreactor:reactor-test:${reactorVersion}"
+            "io.projectreactor:reactor-test:${reactorVersion}",
+            'net.bytebuddy:byte-buddy:1.9.2',
+            'org.objenesis:objenesis:3.0.1'
     )
 }
