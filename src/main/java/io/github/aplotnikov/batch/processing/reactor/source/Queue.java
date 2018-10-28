@@ -1,4 +1,4 @@
-package io.github.aplotnikov.batch.processing.reactor;
+package io.github.aplotnikov.batch.processing.reactor.source;
 
 import reactor.core.publisher.Flux;
 

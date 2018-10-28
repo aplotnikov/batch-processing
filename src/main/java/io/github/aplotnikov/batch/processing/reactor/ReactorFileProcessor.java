@@ -1,29 +1,26 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
-import reactor.core.publisher.Flux;
+import io.github.aplotnikov.batch.processing.reactor.source.XmlFileSource;
 
 class ReactorFileProcessor implements Runnable {
 
-    private final Repository repository;
-
-    private final Queue queue;
+    private final XmlFileSource fileSource;
 
     private final XmlFileReader reader;
 
     private final ClientProcessor processor;
 
-    ReactorFileProcessor(Repository repository, Queue queue, XmlFileReader reader, ClientProcessor processor) {
-        this.repository = repository;
-        this.queue = queue;
+    ReactorFileProcessor(XmlFileSource fileSource, XmlFileReader reader, ClientProcessor processor) {
+        this.fileSource = fileSource;
         this.reader = reader;
         this.processor = processor;
     }
 
     @Override
     public void run() {
-        Flux.merge(repository.readAll(), queue.poll())
-            .flatMap(reader::read)
-            .map(processor::process);
+        fileSource.readAll()
+                  .flatMap(reader::read)
+                  .map(processor::process);
         // collect responses
         // generate result file
     }
