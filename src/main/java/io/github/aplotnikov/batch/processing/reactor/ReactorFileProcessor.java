@@ -1,6 +1,6 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
-import io.github.aplotnikov.batch.processing.reactor.source.XmlFileSource;
+import io.github.aplotnikov.batch.processing.reactor.source.XmlFilesSource;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
@@ -10,7 +10,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 class ReactorFileProcessor implements Runnable {
 
-    XmlFileSource fileSource;
+    XmlFilesSource fileSource;
 
     XmlFileReader reader;
 

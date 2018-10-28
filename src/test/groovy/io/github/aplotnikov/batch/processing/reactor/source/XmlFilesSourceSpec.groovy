@@ -5,14 +5,14 @@ import reactor.test.StepVerifier
 import spock.lang.Specification
 import spock.lang.Subject
 
-class XmlFileSourceSpec extends Specification {
+class XmlFilesSourceSpec extends Specification {
 
-    Repository repository = Mock()
+    Source repository = Mock()
 
-    Queue queue = Mock()
+    Source queue = Mock()
 
     @Subject
-    XmlFileSource source = new XmlFileSource(repository, queue)
+    XmlFilesSource source = new XmlFilesSource(repository, queue)
 
     void 'should merge results from DB and from queue'() {
         given:
@@ -28,7 +28,7 @@ class XmlFileSourceSpec extends Specification {
         and:
             1 * repository.readAll() >> Flux.just(fileFromDB)
         and:
-            1 * queue.poll() >> Flux.just(fileFromQueue)
+            1 * queue.readAll() >> Flux.just(fileFromQueue)
         and:
             0 * _
     }

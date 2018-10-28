@@ -4,14 +4,14 @@ import reactor.test.StepVerifier
 import spock.lang.Specification
 import spock.lang.Subject
 
-class QueueSpec extends Specification {
+class SourceSpec extends Specification {
 
     @Subject
-    Queue queue = new Queue(2, 0)
+    Source source = new Source(2, 0)
 
     void 'should generate 2 files into Flux and Flux should be completed'() {
         expect:
-            StepVerifier.create(queue.poll())
+            StepVerifier.create(source.readAll())
                     .expectNext('client.xml')
                     .expectNext('client.xml')
                     .expectComplete()

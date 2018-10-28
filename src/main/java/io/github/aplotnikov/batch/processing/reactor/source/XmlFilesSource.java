@@ -8,13 +8,13 @@ import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-public class XmlFileSource {
+public class XmlFilesSource {
 
-    Repository repository;
+    Source repository;
 
-    Queue queue;
+    Source queue;
 
     public Flux<String> readAll() {
-        return Flux.merge(repository.readAll(), queue.poll());
+        return Flux.merge(repository.readAll(), queue.readAll());
     }
 }

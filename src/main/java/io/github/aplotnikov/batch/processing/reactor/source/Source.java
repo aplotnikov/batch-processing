@@ -4,25 +4,30 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import reactor.core.publisher.Flux;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
-import static java.util.stream.IntStream.range;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-class Repository {
+class Source {
 
     int processedFileNumber;
 
     int pause;
 
     Flux<String> readAll() {
+        AtomicInteger processedFiles = new AtomicInteger(0);
         return Flux.generate(
                 sink -> {
                     parkNanos(SECONDS.toNanos(pause));
-                    range(0, processedFileNumber).forEach(index -> sink.next("client.xml"));
-                    sink.complete();
+                    if (processedFiles.getAndIncrement() < processedFileNumber) {
+                        sink.next("client.xml");
+                    } else {
+                        sink.complete();
+                    }
                 });
     }
 }
