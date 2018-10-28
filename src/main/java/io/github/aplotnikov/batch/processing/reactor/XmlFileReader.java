@@ -5,6 +5,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedInputStream;
 import java.util.concurrent.Callable;
@@ -29,27 +30,28 @@ class XmlFileReader {
         };
     }
 
+    private Consumer<XMLStreamReader> closeReader() {
+        return reader -> Try.run(reader::close).get();
+    }
+
     private XMLStreamReader findClients(XMLStreamReader reader, SynchronousSink<Client> sink) {
-        Try.run(() -> {
-            // Need to think about refactoring it to Stream
-            while (reader.hasNext()) {
-                if (reader.next() == START_ELEMENT && reader.getLocalName().equals("client")) {
-                    sink.next(parseClient(reader));
-                }
-            }
-        })
+        Try.run(() -> parseClients(reader, sink))
            .onFailure(sink::error)
            .onSuccess(aVoid -> sink.complete());
         return reader;
+    }
+
+    private void parseClients(XMLStreamReader reader, SynchronousSink<Client> sink) throws XMLStreamException {
+        while (reader.hasNext()) {
+            if (reader.next() == START_ELEMENT && reader.getLocalName().equals("client")) {
+                sink.next(parseClient(reader));
+            }
+        }
     }
 
     private Client parseClient(XMLStreamReader reader) {
         return new Client(
                 Long.parseLong(reader.getAttributeValue("", "id"))
         );
-    }
-
-    private Consumer<XMLStreamReader> closeReader() {
-        return reader -> Try.run(reader::close).get();
     }
 }
