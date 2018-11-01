@@ -1,5 +1,6 @@
 package io.github.aplotnikov.batch.processing.reactor.source
 
+import io.github.aplotnikov.batch.processing.reactor.events.FileReceived
 import reactor.test.StepVerifier
 import spock.lang.Specification
 import spock.lang.Subject
@@ -15,8 +16,8 @@ class SourceSpec extends Specification {
     void 'should generate 2 files into Flux and Flux should be completed'() {
         expect:
             StepVerifier.create(source.readAll())
-                    .expectNext('client.xml')
-                    .expectNext('client.xml')
+                    .expectNext(new FileReceived('client.xml'))
+                    .expectNext(new FileReceived('client.xml'))
                     .expectComplete()
                     .verify()
     }
@@ -39,7 +40,7 @@ class SourceSpec extends Specification {
             Instant start = Instant.now()
         when:
             StepVerifier.create(source.readAll())
-                    .expectNext('client.xml')
+                    .expectNext(new FileReceived('client.xml'))
                     .expectComplete()
                     .verify()
         then:

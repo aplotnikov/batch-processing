@@ -1,12 +1,14 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
+import io.github.aplotnikov.batch.processing.reactor.entities.Client;
+import io.github.aplotnikov.batch.processing.reactor.entities.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.github.aplotnikov.batch.processing.reactor.Response.Status.FAILED;
-import static io.github.aplotnikov.batch.processing.reactor.Response.Status.SUCCESS;
+import static io.github.aplotnikov.batch.processing.reactor.entities.Response.Status.FAILED;
+import static io.github.aplotnikov.batch.processing.reactor.entities.Response.Status.SUCCESS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
 import static lombok.AccessLevel.PRIVATE;

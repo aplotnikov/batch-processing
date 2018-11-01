@@ -1,9 +1,15 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
-import io.github.aplotnikov.batch.processing.reactor.Client.ClientBuilder;
+import io.github.aplotnikov.batch.processing.reactor.entities.Client;
+import io.github.aplotnikov.batch.processing.reactor.entities.Client.ClientBuilder;
+import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed;
+import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
+import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed;
+import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted;
 import io.vavr.control.Try;
 import lombok.experimental.FieldDefaults;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 import reactor.util.annotation.Nullable;
 
@@ -25,14 +31,22 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE)
 class XmlFileReader {
 
+    // Need to avoid mutation of the fields
     @Nullable
     ClientBuilder builder;
 
-    Flux<Client> read(String filePath) {
-        return Flux.generate(
-                reader(filePath),
-                this::findClients,
-                closeReader()
+    String filePath;
+
+    Flux<AbstractEvent> read(AbstractEvent event) {
+        this.filePath = event.getSourcePath();
+        return Flux.concat(
+                Mono.just(new FileProcessingStarted(filePath)),
+                Flux.generate(
+                        reader(filePath),
+                        this::findClients,
+                        closeReader()
+                ),
+                Mono.just(new FileProcessed(filePath))
         );
     }
 
@@ -47,12 +61,12 @@ class XmlFileReader {
         return reader -> Try.run(reader::close);
     }
 
-    private XMLStreamReader findClients(XMLStreamReader reader, SynchronousSink<Client> sink) {
+    private XMLStreamReader findClients(XMLStreamReader reader, SynchronousSink<AbstractEvent> sink) {
         Try.run(() -> parseClients(reader, sink)).onFailure(sink::error);
         return reader;
     }
 
-    private void parseClients(XMLStreamReader reader, SynchronousSink<Client> sink) throws XMLStreamException {
+    private void parseClients(XMLStreamReader reader, SynchronousSink<AbstractEvent> sink) throws XMLStreamException {
         boolean anyActionOnSinkIsDone = false;
 
         while (reader.hasNext() && !anyActionOnSinkIsDone) {
@@ -86,9 +100,11 @@ class XmlFileReader {
         }
     }
 
-    private boolean processEndElement(XMLStreamReader reader, SynchronousSink<Client> sink) {
+    private boolean processEndElement(XMLStreamReader reader, SynchronousSink<AbstractEvent> sink) {
         if (XmlTag.of(reader.getLocalName()).equals(XmlTag.CLIENT) && nonNull(builder)) {
-            sink.next(builder.build());
+            sink.next(
+                    new ClientParsed(filePath, builder.build())
+            );
             builder = null;
             return true;
         }

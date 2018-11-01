@@ -1,5 +1,7 @@
 package io.github.aplotnikov.batch.processing.reactor.source;
 
+import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
+import io.github.aplotnikov.batch.processing.reactor.events.FileReceived;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import reactor.core.publisher.Flux;
@@ -18,13 +20,15 @@ class Source {
 
     int pause;
 
-    Flux<String> readAll() {
+    Flux<AbstractEvent> readAll() {
         AtomicInteger processedFiles = new AtomicInteger(0);
         return Flux.generate(
                 sink -> {
                     parkNanos(SECONDS.toNanos(pause));
                     if (processedFiles.getAndIncrement() < processedFileNumber) {
-                        sink.next("client.xml");
+                        sink.next(
+                                new FileReceived("client.xml")
+                        );
                     } else {
                         sink.complete();
                     }

@@ -1,26 +1,28 @@
 package io.github.aplotnikov.batch.processing.reactor.source
 
+import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent
+import io.github.aplotnikov.batch.processing.reactor.events.FileReceived
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import spock.lang.Specification
 import spock.lang.Subject
 
-class XmlFilesSourceSpec extends Specification {
+class EventSourceSpec extends Specification {
 
     Source repository = Mock()
 
     Source queue = Mock()
 
     @Subject
-    XmlFilesSource source = new XmlFilesSource(repository, queue)
+    EventSource source = new EventSource(repository, queue)
 
     void 'should merge results from DB and from queue'() {
         given:
-            String fileFromDB = 'file_from_db.xml'
+            AbstractEvent fileFromDB = new FileReceived('file_from_db.xml')
         and:
-            String fileFromQueue = 'file_from_queue.xml'
+            AbstractEvent fileFromQueue = new FileReceived('file_from_queue.xml')
         when:
-            Flux<String> files = source.readAll()
+            Flux<AbstractEvent> files = source.readAll()
         then:
             StepVerifier.create(files)
                     .expectNext(fileFromDB)

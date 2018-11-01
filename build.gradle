@@ -28,7 +28,7 @@ jar {
 }
 
 ext {
-    reactorVersion = '3.2.1.RELEASE'
+    reactorVersion = '3.2.2.RELEASE'
     lombokVersion = '1.18.2'
 }
 
@@ -43,7 +43,8 @@ dependencies {
 
     compile(
             "io.projectreactor:reactor-core:${reactorVersion}",
-            'io.vavr:vavr:0.9.2'
+            'io.vavr:vavr:0.9.2',
+            'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.7'
     )
 
     testCompile(

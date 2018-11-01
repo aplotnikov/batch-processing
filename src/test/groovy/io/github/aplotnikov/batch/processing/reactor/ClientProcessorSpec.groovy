@@ -1,9 +1,11 @@
 package io.github.aplotnikov.batch.processing.reactor
 
-import static io.github.aplotnikov.batch.processing.reactor.Response.Status.FAILED
-import static io.github.aplotnikov.batch.processing.reactor.Response.Status.SUCCESS
+import static io.github.aplotnikov.batch.processing.reactor.entities.Response.Status.FAILED
+import static io.github.aplotnikov.batch.processing.reactor.entities.Response.Status.SUCCESS
 import static java.util.concurrent.TimeUnit.SECONDS
 
+import io.github.aplotnikov.batch.processing.reactor.entities.Client
+import io.github.aplotnikov.batch.processing.reactor.entities.Response
 import spock.lang.Specification
 import spock.lang.Subject
 
