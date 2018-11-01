@@ -50,7 +50,6 @@ class XmlFileReaderSpec extends Specification {
                     .expectNext(new ClientParsed(event.sourcePath, new Client(2)))
                     .expectNext(new ClientParsed(event.sourcePath, new Client(3)))
                     .expectNext(new FileProcessed(event.sourcePath))
-                    .expectNext(new FileProcessed(event.sourcePath)) // Need to fix it
                     .expectComplete()
                     .verify()
     }

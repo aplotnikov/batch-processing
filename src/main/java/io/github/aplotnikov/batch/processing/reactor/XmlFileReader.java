@@ -2,8 +2,8 @@ package io.github.aplotnikov.batch.processing.reactor;
 
 import io.github.aplotnikov.batch.processing.reactor.entities.Client;
 import io.github.aplotnikov.batch.processing.reactor.entities.Client.ClientBuilder;
-import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed;
 import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
+import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted;
 import io.vavr.control.Try;
