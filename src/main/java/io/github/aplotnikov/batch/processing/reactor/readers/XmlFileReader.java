@@ -10,7 +10,6 @@ import io.vavr.control.Try;
 import lombok.experimental.FieldDefaults;
 import net.jcip.annotations.NotThreadSafe;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
 import reactor.util.annotation.Nullable;
 
@@ -42,13 +41,13 @@ public final class XmlFileReader implements FileReader {
     public Flux<AbstractEvent> read(AbstractEvent event) {
         this.filePath = event.getSourcePath();
         return Flux.concat(
-                Mono.just(new FileProcessingStarted(filePath)),
+                Flux.just(new FileProcessingStarted(filePath)),
                 Flux.generate(
                         reader(filePath),
                         this::findClients,
                         closeReader()
                 ),
-                Mono.just(new FileProcessed(filePath))
+                Flux.just(new FileProcessed(filePath))
         );
     }
 
