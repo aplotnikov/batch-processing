@@ -1,9 +1,11 @@
 package io.github.aplotnikov.batch.processing.reactor.entities;
 
 import lombok.Value;
+import net.jcip.annotations.Immutable;
 
+@Immutable
 @Value
-public class Response {
+public final class Response {
 
     long clientId;
 

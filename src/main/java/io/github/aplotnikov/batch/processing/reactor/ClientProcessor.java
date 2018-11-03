@@ -4,6 +4,7 @@ import io.github.aplotnikov.batch.processing.reactor.entities.Client;
 import io.github.aplotnikov.batch.processing.reactor.entities.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.ThreadSafe;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -13,6 +14,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
 import static lombok.AccessLevel.PRIVATE;
 
+@ThreadSafe
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 class ClientProcessor {

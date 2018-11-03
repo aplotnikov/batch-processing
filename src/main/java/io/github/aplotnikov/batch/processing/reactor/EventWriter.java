@@ -2,12 +2,13 @@ package io.github.aplotnikov.batch.processing.reactor;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import io.github.aplotnikov.batch.processing.reactor.entities.Response;
-import io.github.aplotnikov.batch.processing.reactor.events.ClientProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
+import io.github.aplotnikov.batch.processing.reactor.events.ClientProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted;
 import io.vavr.control.Try;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.ThreadSafe;
 import reactor.core.publisher.GroupedFlux;
 
 import java.nio.file.Files;
@@ -21,6 +22,7 @@ import static io.vavr.Predicates.instanceOf;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static lombok.AccessLevel.PRIVATE;
 
+@ThreadSafe
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 class EventWriter {
 

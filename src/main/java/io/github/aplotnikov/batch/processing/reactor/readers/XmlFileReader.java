@@ -8,6 +8,7 @@ import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted;
 import io.vavr.control.Try;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.NotThreadSafe;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SynchronousSink;
@@ -28,6 +29,7 @@ import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import static lombok.AccessLevel.PRIVATE;
 
+@NotThreadSafe
 @FieldDefaults(level = PRIVATE)
 public final class XmlFileReader implements FileReader {
 

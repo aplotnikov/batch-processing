@@ -5,9 +5,11 @@ import io.github.aplotnikov.batch.processing.reactor.readers.FileReader;
 import io.github.aplotnikov.batch.processing.reactor.source.EventSource;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.ThreadSafe;
 
 import static lombok.AccessLevel.PRIVATE;
 
+@ThreadSafe
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 class ReactorFileProcessor implements Runnable {

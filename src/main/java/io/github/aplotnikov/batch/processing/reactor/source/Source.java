@@ -4,6 +4,7 @@ import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
 import io.github.aplotnikov.batch.processing.reactor.events.FileReceived;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.ThreadSafe;
 import reactor.core.publisher.Flux;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +13,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.concurrent.locks.LockSupport.parkNanos;
 import static lombok.AccessLevel.PRIVATE;
 
+@ThreadSafe
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 class Source {

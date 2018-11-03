@@ -44,7 +44,8 @@ dependencies {
     compile(
             "io.projectreactor:reactor-core:${reactorVersion}",
             'io.vavr:vavr:0.9.2',
-            'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.7'
+            'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.7',
+            'net.jcip:jcip-annotations:1.0'
     )
 
     testCompile(
@@ -52,6 +53,7 @@ dependencies {
             'org.spockframework:spock-core:1.2-groovy-2.5',
             "io.projectreactor:reactor-test:${reactorVersion}",
             'net.bytebuddy:byte-buddy:1.9.2',
-            'org.objenesis:objenesis:3.0.1'
+            'org.objenesis:objenesis:3.0.1',
+            'nl.jqno.equalsverifier:equalsverifier:3.0.2'
     )
 }

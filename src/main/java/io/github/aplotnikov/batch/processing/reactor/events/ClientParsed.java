@@ -5,14 +5,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.jcip.annotations.Immutable;
 
 import static lombok.AccessLevel.PRIVATE;
 
+@Immutable
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @Getter
-@ToString
-@EqualsAndHashCode
-public class ClientParsed extends AbstractEvent {
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public final class ClientParsed extends AbstractEvent {
 
     Client client;
 
