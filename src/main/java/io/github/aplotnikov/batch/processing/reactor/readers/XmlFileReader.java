@@ -1,4 +1,4 @@
-package io.github.aplotnikov.batch.processing.reactor;
+package io.github.aplotnikov.batch.processing.reactor.readers;
 
 import io.github.aplotnikov.batch.processing.reactor.entities.Client;
 import io.github.aplotnikov.batch.processing.reactor.entities.Client.ClientBuilder;
@@ -29,15 +29,15 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import static lombok.AccessLevel.PRIVATE;
 
 @FieldDefaults(level = PRIVATE)
-class XmlFileReader {
+public final class XmlFileReader implements FileReader {
 
-    // Need to avoid mutation of the fields
     @Nullable
     ClientBuilder builder;
 
     String filePath;
 
-    Flux<AbstractEvent> read(AbstractEvent event) {
+    @Override
+    public Flux<AbstractEvent> read(AbstractEvent event) {
         this.filePath = event.getSourcePath();
         return Flux.concat(
                 Mono.just(new FileProcessingStarted(filePath)),

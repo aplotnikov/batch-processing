@@ -1,8 +1,8 @@
-package io.github.aplotnikov.batch.processing.reactor
+package io.github.aplotnikov.batch.processing.reactor.readers
 
 import io.github.aplotnikov.batch.processing.reactor.entities.Client
-import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed
 import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent
+import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted
 import io.github.aplotnikov.batch.processing.reactor.events.FileReceived

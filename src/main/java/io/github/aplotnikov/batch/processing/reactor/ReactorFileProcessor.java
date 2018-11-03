@@ -1,6 +1,7 @@
 package io.github.aplotnikov.batch.processing.reactor;
 
 import io.github.aplotnikov.batch.processing.reactor.events.AbstractEvent;
+import io.github.aplotnikov.batch.processing.reactor.readers.FileReader;
 import io.github.aplotnikov.batch.processing.reactor.source.EventSource;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +14,7 @@ class ReactorFileProcessor implements Runnable {
 
     EventSource fileSource;
 
-    XmlFileReader reader;
+    FileReader reader;
 
     EventProcessor processor;
 
