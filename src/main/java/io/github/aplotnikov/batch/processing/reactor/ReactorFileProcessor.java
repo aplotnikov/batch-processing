@@ -27,7 +27,7 @@ class ReactorFileProcessor implements Runnable {
         fileSource.readAll()
                   .flatMap(reader::read)
                   .map(processor::process)
-                  .groupBy(AbstractEvent::getSourcePath)
+                  .groupBy(AbstractEvent::getFileName)
                   .subscribe(writer::write);
     }
 }

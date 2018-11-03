@@ -13,6 +13,6 @@ import static lombok.AccessLevel.PRIVATE;
 @EqualsAndHashCode
 public abstract class AbstractEvent {
 
-    String sourcePath;
+    String fileName;
 
 }

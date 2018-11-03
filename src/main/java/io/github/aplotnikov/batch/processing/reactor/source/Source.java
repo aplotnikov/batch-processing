@@ -16,13 +16,13 @@ import static lombok.AccessLevel.PRIVATE;
 @ThreadSafe
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-class Source {
+public class Source {
 
     int processedFileNumber;
 
     int pause;
 
-    Flux<AbstractEvent> readAll() {
+    public Flux<AbstractEvent> readAll() {
         AtomicInteger processedFiles = new AtomicInteger(0);
         return Flux.generate(
                 sink -> {

@@ -1,0 +1,17 @@
+<clients>
+    <client>
+        <id>1</id>
+    </client>
+    <client>
+        <id>2</id>
+    </client>
+    <client>
+        <id>3</id>
+    </client>
+    <client>
+        <id>4</id>
+    </client>
+    <client>
+        <id>5</id>
+    </client>
+</clients>

@@ -35,7 +35,7 @@ class EventProcessorSpec extends Specification {
             event instanceof ClientProcessed
         and:
             with(event) {
-                sourcePath == clientParsedEvent.sourcePath
+                fileName == clientParsedEvent.fileName
                 response == processedResponse
             }
         and:

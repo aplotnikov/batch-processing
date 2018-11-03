@@ -7,6 +7,7 @@ import io.github.aplotnikov.batch.processing.reactor.events.ClientParsed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessed;
 import io.github.aplotnikov.batch.processing.reactor.events.FileProcessingStarted;
 import io.vavr.control.Try;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.jcip.annotations.NotThreadSafe;
 import reactor.core.publisher.Flux;
@@ -16,7 +17,10 @@ import reactor.util.annotation.Nullable;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -30,31 +34,34 @@ import static lombok.AccessLevel.PRIVATE;
 
 @NotThreadSafe
 @FieldDefaults(level = PRIVATE)
+@RequiredArgsConstructor
 public final class XmlFileReader implements FileReader {
+
+    final String rootSourceFolder;
 
     @Nullable
     ClientBuilder builder;
 
-    String filePath;
+    String fileName;
 
     @Override
     public Flux<AbstractEvent> read(AbstractEvent event) {
-        this.filePath = event.getSourcePath();
+        this.fileName = event.getFileName();
         return Flux.concat(
-                Flux.just(new FileProcessingStarted(filePath)),
+                Flux.just(new FileProcessingStarted(fileName)),
                 Flux.generate(
-                        reader(filePath),
+                        reader(rootSourceFolder + File.separator + fileName),
                         this::findClients,
                         closeReader()
                 ),
-                Flux.just(new FileProcessed(filePath))
+                Flux.just(new FileProcessed(fileName))
         );
     }
 
     private Callable<XMLStreamReader> reader(String filePath) {
         return () -> {
-            BufferedInputStream inputStream = new BufferedInputStream(getClass().getResourceAsStream(filePath));
-            return XMLInputFactory.newInstance().createXMLStreamReader(inputStream);
+            Reader reader = Files.newBufferedReader(Path.of(filePath));
+            return XMLInputFactory.newInstance().createXMLStreamReader(reader);
         };
     }
 
@@ -104,7 +111,7 @@ public final class XmlFileReader implements FileReader {
     private boolean processEndElement(XMLStreamReader reader, SynchronousSink<AbstractEvent> sink) {
         if (XmlTag.of(reader.getLocalName()).equals(XmlTag.CLIENT) && nonNull(builder)) {
             sink.next(
-                    new ClientParsed(filePath, builder.build())
+                    new ClientParsed(fileName, builder.build())
             );
             builder = null;
             return true;

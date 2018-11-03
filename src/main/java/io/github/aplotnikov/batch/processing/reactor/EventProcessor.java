@@ -24,7 +24,7 @@ class EventProcessor {
         return Match(incomeEvent).of(
                 Case($(instanceOf(ClientParsed.class)),
                      event -> new ClientProcessed(
-                             event.getSourcePath(),
+                             event.getFileName(),
                              processor.process(event.getClient())
                      )
                 ),
