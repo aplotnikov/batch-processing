@@ -6,6 +6,7 @@ import io.github.aplotnikov.batch.processing.reactor.source.EventSource;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.jcip.annotations.ThreadSafe;
+import reactor.core.scheduler.Schedulers;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -25,9 +26,14 @@ class ReactorFileProcessor implements Runnable {
     @Override
     public void run() {
         fileSource.readAll()
+                  .log()
                   .flatMap(reader::read)
+                  .log()
                   .map(processor::process)
+                  .log()
                   .groupBy(AbstractEvent::getFileName)
+                  .log()
+                  .subscribeOn(Schedulers.parallel())
                   .subscribe(writer::write);
     }
 }

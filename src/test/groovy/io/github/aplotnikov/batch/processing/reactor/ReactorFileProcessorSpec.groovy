@@ -1,8 +1,5 @@
 package io.github.aplotnikov.batch.processing.reactor
 
-import static java.util.concurrent.TimeUnit.SECONDS
-import static java.util.concurrent.locks.LockSupport.parkNanos
-
 import io.github.aplotnikov.batch.processing.reactor.events.FileReceived
 import io.github.aplotnikov.batch.processing.reactor.readers.XmlFileReaderDecorator
 import io.github.aplotnikov.batch.processing.reactor.source.EventSource
@@ -12,8 +9,11 @@ import org.junit.rules.TemporaryFolder
 import reactor.core.publisher.Flux
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.util.concurrent.PollingConditions
 
 import java.nio.file.Path
+import java.time.Duration
+import java.time.Instant
 
 class ReactorFileProcessorSpec extends Specification {
 
@@ -37,42 +37,46 @@ class ReactorFileProcessorSpec extends Specification {
         processor = new ReactorFileProcessor(
                 new EventSource(db, queue),
                 new XmlFileReaderDecorator(rootSourceFolder()),
-                new EventProcessor(new ClientProcessor(0)),
+                new EventProcessor(new ClientProcessor(1)),
                 new EventWriter(folder.root.toPath())
         )
     }
 
     void 'should process files'() {
         given:
+            PollingConditions conditions = new PollingConditions(timeout: 12)
+        and:
             db.readAll() >> Flux.just(new FileReceived(FILE_FROM_DB))
         and:
             queue.readAll() >> Flux.just(new FileReceived(FILE_FROM_QUEUE))
         when:
             processor.run()
         then:
-            parkNanos(SECONDS.toNanos(1))
+            Duration.between(old(Instant.now()), Instant.now()).toSeconds() < 1
         and:
-            List<File> generatedFiles = []
-            folder.root.eachFileMatch(~/.*response_.*.xml/) { generatedFiles << it }
-        and:
-            generatedFiles.size() == 2
-        and:
-            File dbFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_DB) }
-            with(dbFileResponse.text) {
-                contains '<clientId>1</clientId>'
-                contains '<clientId>2</clientId>'
-                contains '<clientId>3</clientId>'
-                contains '<clientId>4</clientId>'
-                contains '<clientId>5</clientId>'
-            }
-        and:
-            File queueFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_QUEUE) }
-            with(queueFileResponse.text) {
-                contains '<clientId>11</clientId>'
-                contains '<clientId>12</clientId>'
-                contains '<clientId>13</clientId>'
-                contains '<clientId>14</clientId>'
-                contains '<clientId>15</clientId>'
+            conditions.eventually {
+                List<File> generatedFiles = []
+                folder.root.eachFileMatch(~/.*response_.*.xml/) { generatedFiles << it }
+
+                generatedFiles.size() == 2
+
+                File dbFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_DB) }
+                with(dbFileResponse.text) {
+                    contains '<clientId>1</clientId>'
+                    contains '<clientId>2</clientId>'
+                    contains '<clientId>3</clientId>'
+                    contains '<clientId>4</clientId>'
+                    contains '<clientId>5</clientId>'
+                }
+
+                File queueFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_QUEUE) }
+                with(queueFileResponse.text) {
+                    contains '<clientId>11</clientId>'
+                    contains '<clientId>12</clientId>'
+                    contains '<clientId>13</clientId>'
+                    contains '<clientId>14</clientId>'
+                    contains '<clientId>15</clientId>'
+                }
             }
     }
 
