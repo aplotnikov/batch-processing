@@ -37,7 +37,7 @@ dependencies {
             "org.projectlombok:lombok:${lombokVersion}"
     )
 
-    apt(
+    annotationProcessor(
             "org.projectlombok:lombok:${lombokVersion}"
     )
 
