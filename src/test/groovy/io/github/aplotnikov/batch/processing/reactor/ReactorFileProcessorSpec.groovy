@@ -22,7 +22,7 @@ class ReactorFileProcessorSpec extends Specification {
     static final String FILE_FROM_QUEUE = 'file_from_queue.xml'
 
     @Rule
-    TemporaryFolder folder = new TemporaryFolder()
+    TemporaryFolder folder
 
     Source db = Stub()
 
@@ -32,8 +32,6 @@ class ReactorFileProcessorSpec extends Specification {
     ReactorFileProcessor processor
 
     void setup() {
-        folder.create()
-
         processor = new ReactorFileProcessor(
                 new EventSource(db, queue),
                 new XmlFileReaderDecorator(rootSourceFolder()),
@@ -81,7 +79,6 @@ class ReactorFileProcessorSpec extends Specification {
     }
 
     private String rootSourceFolder() {
-        // Think to improve it
         // File file_from_db.xml should exist into the same folder as this tests file
         Path.of(getClass().getResource(FILE_FROM_DB).path)
                 .parent.toFile().absolutePath
