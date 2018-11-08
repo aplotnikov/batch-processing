@@ -6,6 +6,8 @@ import lombok.experimental.FieldDefaults;
 import net.jcip.annotations.ThreadSafe;
 import reactor.core.publisher.Flux;
 
+import java.nio.file.Path;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @ThreadSafe
@@ -13,7 +15,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 public final class XmlFileReaderDecorator implements FileReader {
 
-    String rootSourceFolder;
+    Path rootSourceFolder;
 
     @Override
     public Flux<AbstractEvent> read(AbstractEvent event) {

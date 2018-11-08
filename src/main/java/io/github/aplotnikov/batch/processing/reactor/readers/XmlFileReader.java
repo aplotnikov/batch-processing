@@ -17,7 +17,6 @@ import reactor.util.annotation.Nullable;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.File;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +24,6 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static java.util.Locale.ENGLISH;
 import static java.util.Objects.nonNull;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
@@ -37,7 +35,7 @@ import static lombok.AccessLevel.PRIVATE;
 @RequiredArgsConstructor
 public final class XmlFileReader implements FileReader {
 
-    final String rootSourceFolder;
+    final Path rootSourceFolder;
 
     @Nullable
     ClientBuilder builder;
@@ -50,7 +48,7 @@ public final class XmlFileReader implements FileReader {
         return Flux.concat(
                 Flux.just(new FileProcessingStarted(fileName)),
                 Flux.generate(
-                        reader(rootSourceFolder + File.separator + fileName),
+                        reader(rootSourceFolder.resolve(fileName)),
                         this::findClients,
                         closeReader()
                 ),
@@ -58,9 +56,9 @@ public final class XmlFileReader implements FileReader {
         );
     }
 
-    private Callable<XMLStreamReader> reader(String filePath) {
+    private Callable<XMLStreamReader> reader(Path filePath) {
         return () -> {
-            Reader reader = Files.newBufferedReader(Path.of(filePath));
+            Reader reader = Files.newBufferedReader(filePath);
             return XMLInputFactory.newInstance().createXMLStreamReader(reader);
         };
     }
@@ -127,7 +125,7 @@ public final class XmlFileReader implements FileReader {
 
         static XmlTag of(String text) {
             return Stream.of(values())
-                         .filter(value -> value.name().equals(text.toUpperCase(ENGLISH)))
+                         .filter(value -> value.name().equalsIgnoreCase(text))
                          .findAny()
                          .orElse(UNKNOWN);
         }

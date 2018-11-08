@@ -11,15 +11,10 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.util.concurrent.PollingConditions
 
-import java.nio.file.Path
 import java.time.Duration
 import java.time.Instant
 
 class ReactorFileProcessorSpec extends Specification {
-
-    static final String FILE_FROM_DB = 'file_from_db.xml'
-
-    static final String FILE_FROM_QUEUE = 'file_from_queue.xml'
 
     @Rule
     TemporaryFolder folder
@@ -34,7 +29,7 @@ class ReactorFileProcessorSpec extends Specification {
     void setup() {
         processor = new ReactorFileProcessor(
                 new EventSource(db, queue),
-                new XmlFileReaderDecorator(rootSourceFolder()),
+                new XmlFileReaderDecorator(folder.root.toPath()),
                 new EventProcessor(new ClientProcessor(1)),
                 new EventWriter(folder.root.toPath())
         )
@@ -44,9 +39,15 @@ class ReactorFileProcessorSpec extends Specification {
         given:
             PollingConditions conditions = new PollingConditions(timeout: 12)
         and:
-            db.readAll() >> Flux.just(new FileReceived(FILE_FROM_DB))
+            List<Long> clientsFromDbFile = (1..5)
+            String fileFromDb = generateFile(clientsFromDbFile)
         and:
-            queue.readAll() >> Flux.just(new FileReceived(FILE_FROM_QUEUE))
+            List<Long> clientsFromQueueFile = (11..15)
+            String fileFromQueue = generateFile(clientsFromQueueFile)
+        and:
+            db.readAll() >> Flux.just(new FileReceived(fileFromDb))
+        and:
+            queue.readAll() >> Flux.just(new FileReceived(fileFromQueue))
         when:
             processor.run()
         then:
@@ -54,33 +55,32 @@ class ReactorFileProcessorSpec extends Specification {
         and:
             conditions.eventually {
                 List<File> generatedFiles = []
-                folder.root.eachFileMatch(~/.*response_.*.xml/) { generatedFiles << it }
+                folder.root.eachFileMatch(~/.*response_.*/) { generatedFiles << it }
 
                 generatedFiles.size() == 2
 
-                File dbFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_DB) }
-                with(dbFileResponse.text) {
-                    contains '<clientId>1</clientId>'
-                    contains '<clientId>2</clientId>'
-                    contains '<clientId>3</clientId>'
-                    contains '<clientId>4</clientId>'
-                    contains '<clientId>5</clientId>'
-                }
+                assertFileContent(
+                        generatedFiles.find { it.name.contains(fileFromDb) },
+                        clientsFromDbFile
+                )
 
-                File queueFileResponse = generatedFiles.find { it.absolutePath.contains(FILE_FROM_QUEUE) }
-                with(queueFileResponse.text) {
-                    contains '<clientId>11</clientId>'
-                    contains '<clientId>12</clientId>'
-                    contains '<clientId>13</clientId>'
-                    contains '<clientId>14</clientId>'
-                    contains '<clientId>15</clientId>'
-                }
+                assertFileContent(
+                        generatedFiles.find { it.name.contains(fileFromQueue) },
+                        clientsFromQueueFile
+                )
             }
     }
 
-    private String rootSourceFolder() {
-        // File file_from_db.xml should exist into the same folder as this tests file
-        Path.of(getClass().getResource(FILE_FROM_DB).path)
-                .parent.toFile().absolutePath
+    private static void assertFileContent(File file, List<Long> clientIds) {
+        String content = file.text
+        clientIds.each {
+            assert content.contains("<clientId>${it}</clientId>")
+        }
+    }
+
+    private String generateFile(List<Long> clientIds) {
+        folder.newFile().tap {
+            new FileGenerator().generate(it.toPath(), clientIds)
+        }.name
     }
 }

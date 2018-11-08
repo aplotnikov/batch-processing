@@ -98,10 +98,8 @@ class XmlFileReaderSpec extends Specification {
                     .verify()
     }
 
-    private String rootFolder() {
-        // Think to improve it
+    private Path rootFolder() {
         // File clients.xml should exist into the same folder as this tests file
-        Path.of(getClass().getResource('clients.xml').path)
-                .parent.toFile().absolutePath
+        Path.of(getClass().getResource('clients.xml').path).parent
     }
 }
