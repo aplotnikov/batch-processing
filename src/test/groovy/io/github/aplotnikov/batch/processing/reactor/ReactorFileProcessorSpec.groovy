@@ -39,10 +39,10 @@ class ReactorFileProcessorSpec extends Specification {
         given:
             PollingConditions conditions = new PollingConditions(timeout: 12)
         and:
-            List<Long> clientsFromDbFile = (1..5)
+            List<Long> clientsFromDbFile = 1..5
             String fileFromDb = generateFile(clientsFromDbFile)
         and:
-            List<Long> clientsFromQueueFile = (11..15)
+            List<Long> clientsFromQueueFile = 11..15
             String fileFromQueue = generateFile(clientsFromQueueFile)
         and:
             db.readAll() >> Flux.just(new FileReceived(fileFromDb))
